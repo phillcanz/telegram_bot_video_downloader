@@ -30,11 +30,12 @@ def download_video(update: Update, context: CallbackContext) -> None:
         'format': 'bestvideo+bestaudio/best',
         'outtmpl': 'downloaded_video.%(ext)s',
         'merge_output_format': 'mp4',
-        'postprocessors': [{
-            'key': 'FFmpegMerger',
-            'preferredcodec': 'mp4',
-            'preferredquality': '192',
-        }],
+        'postprocessors': [
+            {
+                'key': 'FFmpegVideoConvertor',
+                'preferedformat': 'mp4',
+            }
+        ],
     }
 
     try:
@@ -70,4 +71,4 @@ def main():
     updater.idle()
 
 if __name__ == '__main__':
-    main()
+        main()
