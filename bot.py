@@ -29,21 +29,12 @@ def download_video(update: Update, context: CallbackContext) -> None:
     ydl_opts = {
         'format': 'bestvideo+bestaudio/best',
         'outtmpl': 'downloaded_video.%(ext)s',
-        'postprocessors': [
-            {
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            },
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4',
-            },
-            {
-                'key': 'FFmpegMetadata',
-            },
-        ],
-        'merge_output_format': 'mp4'
+        'merge_output_format': 'mp4',
+        'postprocessors': [{
+            'key': 'FFmpegMerger',
+            'preferredcodec': 'mp4',
+            'preferredquality': '192',
+        }],
     }
 
     try:
