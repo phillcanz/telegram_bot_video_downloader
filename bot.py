@@ -34,6 +34,7 @@ def download_video(update: Update, context: CallbackContext) -> None:
             {
                 'key': 'FFmpegVideoConvertor',
                 'preferedformat': 'mp4',
+                'options': '-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -movflags +faststart'
             }
         ],
     }
@@ -71,4 +72,4 @@ def main():
     updater.idle()
 
 if __name__ == '__main__':
-        main()
+    main()
