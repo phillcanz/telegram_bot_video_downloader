@@ -9,4 +9,4 @@ COPY . .
 
 COPY .env .env
 
-CMD ["python", "./bot_script.py"]
+CMD ["python", "bot.py"]
