@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import yt_dlp
@@ -29,30 +30,22 @@ def download_video(update: Update, context: CallbackContext) -> None:
     ydl_opts = {
         'format': 'bestvideo+bestaudio/best',
         'outtmpl': 'downloaded_video.%(ext)s',
-        'merge_output_format': 'mp4',
-        'postprocessors': [
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4',
-            },
-            {
-                'key': 'FFmpegEmbedSubtitle',
-            },
-            {
-                'key': 'FFmpegMetadata',
-            },
-        ],
-        'postprocessor_args': [
-            '-c:v', 'copy', '-c:a', 'aac', '-strict', 'experimental', '-movflags', '+faststart'
-        ],
+        'merge_output_format': 'mkv',
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=True)
-            file_path = ydl.prepare_filename(info_dict)
+            video_path = ydl.prepare_filename(info_dict)
+            audio_path = video_path.replace('.mp4', '.m4a')
 
-        with open(file_path, 'rb') as video_file:
+        merged_path = 'merged_video.mp4'
+        ffmpeg_command = [
+            'ffmpeg', '-i', video_path, '-i', audio_path, '-c:v', 'libx264', '-c:a', 'aac', '-strict', 'experimental', '-movflags', '+faststart', merged_path
+        ]
+        subprocess.run(ffmpeg_command, check=True)
+
+        with open(merged_path, 'rb') as video_file:
             context.bot.send_video(chat_id=update.message.chat_id, video=video_file)
 
         update.message.reply_text('Video downloaded and sent!')
