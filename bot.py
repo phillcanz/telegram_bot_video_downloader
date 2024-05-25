@@ -52,4 +52,31 @@ def download_video(update: Update, context: CallbackContext) -> None:
             file_path = ydl.prepare_filename(info_dict)
 
         with open(file_path, 'rb') as video_file:
-            context.bot.send_video(chat_id=update.
+            context.bot.send_video(chat_id=update.message.chat_id, video=video_file)
+
+        update.message.reply_text('Video downloaded and sent!')
+    except Exception as e:
+        logger.error(f"Error downloading video: {e}")
+        update.message.reply_text('An error occurred while downloading the video.')
+
+def main():
+    # Create the Updater and pass it your bot's token.
+    updater = Updater(TELEGRAM_BOT_TOKEN)
+
+    # Get the dispatcher to register handlers
+    dispatcher = updater.dispatcher
+
+    # on different commands - answer in Telegram
+    dispatcher.add_handler(CommandHandler("start", start))
+
+    # on noncommand i.e message - download the video
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, download_video))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM or SIGABRT
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
