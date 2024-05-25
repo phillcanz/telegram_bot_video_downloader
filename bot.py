@@ -34,8 +34,17 @@ def download_video(update: Update, context: CallbackContext) -> None:
             {
                 'key': 'FFmpegVideoConvertor',
                 'preferedformat': 'mp4',
-                'options': '-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -movflags +faststart'
-            }
+            },
+            {
+                'key': 'FFmpegEmbedSubtitle',
+            },
+            {
+                'key': 'FFmpegMetadata',
+            },
+        ],
+        'postprocessor_args': [
+            '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+            '-movflags', '+faststart'
         ],
     }
 
