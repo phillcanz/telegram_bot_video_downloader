@@ -3,6 +3,7 @@ import os
 import subprocess
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.error import BadRequest
 import yt_dlp
 from dotenv import load_dotenv
 
@@ -53,6 +54,19 @@ def download_video(update: Update, context: CallbackContext) -> None:
         logger.error(f"Error downloading video: {e}")
         update.message.reply_text('An error occurred while downloading the video.')
 
+def clear_chat(update: Update, context: CallbackContext) -> None:
+    chat_id = update.message.chat_id
+    message_id = update.message.message_id
+
+    try:
+        for i in range(message_id, message_id-100, -1):
+            context.bot.delete_message(chat_id=chat_id, message_id=i)
+    except BadRequest as e:
+        if "message to delete not found" in str(e):
+            pass
+        else:
+            logger.error(f"Error clearing chat: {e}")
+
 def main():
     # Create the Updater and pass it your bot's token.
     updater = Updater(TELEGRAM_BOT_TOKEN)
@@ -62,6 +76,7 @@ def main():
 
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("clear", clear_chat))
 
     # on noncommand i.e message - download the video
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, download_video))
