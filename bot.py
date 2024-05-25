@@ -43,8 +43,7 @@ def download_video(update: Update, context: CallbackContext) -> None:
             },
         ],
         'postprocessor_args': [
-            '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
-            '-movflags', '+faststart'
+            '-c:v', 'copy', '-c:a', 'aac', '-strict', 'experimental', '-movflags', '+faststart'
         ],
     }
 
