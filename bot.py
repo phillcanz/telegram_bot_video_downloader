@@ -1,7 +1,12 @@
 import logging
+import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import yt_dlp
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Enable logging
 logging.basicConfig(
@@ -10,8 +15,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Define your bot token
-TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
+# Get the bot token from environment variables
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
 # Define a command handler. This usually takes the two arguments update and context.
 def start(update: Update, context: CallbackContext) -> None:
